@@ -181,3 +181,11 @@ main {
 #composer button:hover {
   background: #006edc;
 }
+
+#foot{
+  text-align: center;
+    padding: 10px;
+    background: #f5f7fb;
+    color: #666;
+    font-size: 12px;
+}
