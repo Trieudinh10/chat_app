@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logoutBtn');
 
   let myUsername = '';
+  let lastUsername = ''; // Lưu username của tin nhắn cuối cùng
 
   function formatTime(date){
     const h = date.getHours().toString().padStart(2,'0');
@@ -22,13 +23,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Nếu timestamp là string từ DB, chuyển thành Date object
     const msgTime = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
 
-    li.innerHTML = `
-      <div class="msg-header">
-        <span class="username">${username}</span>
-        <span class="time">${formatTime(msgTime)}</span>
-      </div>
-      <div class="msg-body">${msg}</div>
-    `;
+    // Kiểm tra nếu username trùng với tin nhắn trước đó
+    const showHeader = username !== lastUsername;
+    lastUsername = username;
+
+    if (showHeader) {
+      // Hiển thị header (tên + thời gian) nếu là tin nhắn từ user mới
+      li.innerHTML = `
+        <div class="msg-header">
+          <span class="username">${username}</span>
+          <span class="time">${formatTime(msgTime)}</span>
+        </div>
+        <div class="msg-body">${msg}</div>
+      `;
+    } else {
+      // Không hiển thị header nếu username trùng
+      li.innerHTML = `
+        <div class="msg-body">${msg}</div>
+      `;
+      li.classList.add('no-header');
+    }
 
     messagesEl.appendChild(li);
     messagesEl.scrollTop = messagesEl.scrollHeight;

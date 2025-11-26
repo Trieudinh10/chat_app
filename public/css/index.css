@@ -11,10 +11,9 @@ body {
 #chat-container {
   width: 100%;
   max-width: 1600px;
-  height: 90%;
+  height: 100%;
   max-height: 900px;
   background: #fff;
-  border-radius: 12px;
   box-shadow: 0 6px 25px rgba(0,0,0,0.2);
   display: flex;
   flex-direction: column;
@@ -53,6 +52,11 @@ padding: 5px 15px;
   font-size: 16px;
 }
 
+#messages li.no-header {
+  padding-top: 2px;
+  margin-bottom: 1px;
+}
+
 #messages li.self {
   background: #0084ff;
   color: #fff;
@@ -68,13 +72,12 @@ padding: 5px 15px;
 .msg-header {
   font-size: 12px;
   color: #000;
-  margin-bottom: 4px;
   display: flex;
   justify-content: space-between;
 }
 
 .msg-body {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 #input-container {
@@ -111,4 +114,9 @@ padding: 5px 15px;
 #logoutBtn {
   background: #f44336;
   color: #fff;
+}
+
+.time{
+  font-size: 11px;
+opacity: 0.7;
 }

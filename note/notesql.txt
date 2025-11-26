@@ -1,0 +1,30 @@
+-- Tạo database
+CREATE DATABASE chat_app;
+USE chat_app;
+
+-- Bảng users
+CREATE TABLE users(
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) UNIQUE,
+  password VARCHAR(255)
+);
+
+-- Bảng messages
+CREATE TABLE messages(
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50),
+  message TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- lỗi deny
+Xóa user cũ (nếu muốn)
+DROP USER IF EXISTS 'chatuser'@'%';
+DROP USER IF EXISTS 'chatuser'@'localhost';
+DROP USER IF EXISTS 'chatuser'@'DESKTOP-O7Q92EG';
+
+CREATE USER 'root'@'%' IDENTIFIED BY '123456';
+
+GRANT ALL PRIVILEGES ON chat_app.* TO 'root'@'%';
+FLUSH PRIVILEGES;
+
