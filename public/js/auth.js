@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       const res = await apiRequest('/api/auth/login', 'POST', { username, password });
-      if (res.success) location.href = '/index.html';
+      if (res.success) location.href = '/chat';
       else alert(res.error);
     });
   }
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       const res = await apiRequest('/api/auth/register', 'POST', { username, password });
-      if (res.success) location.href = '/login.html';
+      if (res.success) location.href = '/login';
       else alert(res.error);
     });
   }
@@ -30,7 +30,7 @@ async function logout() {
     // ngắt Socket.IO
     if(typeof socket !== 'undefined') socket.disconnect();
     // chuyển về trang login
-    window.location.href = '/login.html';
+    window.location.href = '/login';
   } else {
     alert("Logout failed: " + res.error);
   }

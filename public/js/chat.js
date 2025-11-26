@@ -14,15 +14,18 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${h}:${m}`;
   }
 
-  function addMessage(msg, username){
+  function addMessage(msg, username, timestamp){
     const li = document.createElement('li');
     const self = username === myUsername;
     li.className = self ? 'self' : 'other';
 
+    // Nếu timestamp là string từ DB, chuyển thành Date object
+    const msgTime = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
+
     li.innerHTML = `
       <div class="msg-header">
         <span class="username">${username}</span>
-        <span class="time">${formatTime(new Date())}</span>
+        <span class="time">${formatTime(msgTime)}</span>
       </div>
       <div class="msg-body">${msg}</div>
     `;
@@ -36,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if(msg === '') return;
     if(socket.connected){
       socket.emit('chat message', msg);
-      addMessage(msg, myUsername);
+      const timestamp = new Date();
+      addMessage(msg, myUsername, timestamp);
       messageInput.value = '';
     }
   }
@@ -52,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await apiRequest('/api/auth/logout','POST');
       if(res.success){
         socket.disconnect();
-        window.location.href = '/login.html';
+        window.location.href = '/login';
       } else {
         alert("Logout thất bại: " + res.error);
       }
@@ -65,32 +69,29 @@ document.addEventListener('DOMContentLoaded', () => {
     try{
       const res = await apiRequest('/api/auth/check');
       if(!res.user){
-        window.location.href = '/login.html';
+        window.location.href = '/login';
       } else {
         myUsername = res.user.username;
       }
     } catch(err){
       console.error(err);
-      window.location.href = '/login.html';
+      window.location.href = '/login';
     }
   }
 
   async function loadMessages(){
     try{
       const messages = await apiRequest('/api/chat/messages');
-      messages.forEach(m => addMessage(m.message, m.username));
+      messages.forEach(m => addMessage(m.message, m.username, m.created_at || new Date()));
     } catch(err){
       console.error(err);
     }
   }
 
-  socket.on('chat message', (msg)=>{
-    const splitIndex = msg.indexOf(':');
-    if(splitIndex === -1) return;
-    const username = msg.substring(0,splitIndex).trim();
-    const text = msg.substring(splitIndex+1).trim();
-    if(username !== myUsername){
-      addMessage(text, username);
+  socket.on('chat message', (msgObj)=>{
+    // msgObj là object với {username, message, timestamp}
+    if(msgObj.username !== myUsername){
+      addMessage(msgObj.message, msgObj.username, msgObj.timestamp);
     }
   });
 

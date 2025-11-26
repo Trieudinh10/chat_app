@@ -12,6 +12,10 @@ const { sessionMiddleware } = require('./utils/sessionMiddleware');
 const { requireLogin } = require('./utils/authMiddleware');
 
 const app = express();
+
+// Set up EJS view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 const server = http.createServer(app);
 
 // Socket.IO với CORS cho LAN
@@ -36,15 +40,35 @@ app.use('/api/chat', chatRoutes);
 // Root redirect
 app.get('/', (req, res) => {
   if(req.session.user){
-    res.redirect('/index.html');
+    res.redirect('/chat');
   } else {
-    res.redirect('/login.html');
+    res.redirect('/login');
   }
 });
 
-// Bảo vệ index.html
-app.get('/index.html', requireLogin, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+
+
+// Chat page (protected)
+app.get('/chat', requireLogin, (req, res) => {
+  res.render('index');
+});
+
+// Login page
+app.get('/login', (req, res) => {
+  if(req.session.user){
+    res.redirect('/chat');
+  } else {
+    res.render('login');
+  }
+});
+
+// Register page
+app.get('/register', (req, res) => {
+  if(req.session.user){
+    res.redirect('/chat');
+  } else {
+    res.render('register');
+  }
 });
 
 // Socket.IO dùng session
@@ -59,12 +83,16 @@ io.on('connection', (socket) => {
   // Nhận tin nhắn từ client
   socket.on('chat message', async (msg) => {
     try {
-      const fullMsg = `${username}: ${msg}`;
       const { saveMessage } = require('./models/message');
       await saveMessage(username, msg);
 
-      // Phát tin nhắn tới tất cả client
-      io.emit('chat message', fullMsg);
+      // Phật tin nhắn tới tất cả client (kèm theo thời gian)
+      const timestamp = new Date();
+      io.emit('chat message', {
+        username: username,
+        message: msg,
+        timestamp: timestamp
+      });
     } catch(err){
       console.error('Error saving message:', err);
     }
