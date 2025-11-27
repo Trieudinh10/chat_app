@@ -20,8 +20,8 @@ CREATE TABLE messages(
 -- lỗi deny
 Xóa user cũ (nếu muốn)
 DROP USER IF EXISTS 'chatuser'@'%';
-DROP USER IF EXISTS 'chatuser'@'localhost';
-DROP USER IF EXISTS 'chatuser'@'DESKTOP-O7Q92EG';
+DROP USER IF EXISTS 'chatuser'@'localhost'; // tên user cụ thể 
+DROP USER IF EXISTS 'chatuser'@'DESKTOP-O7Q92EG'; // tên user cụ thể 
 
 CREATE USER 'root'@'%' IDENTIFIED BY '123456';
 
